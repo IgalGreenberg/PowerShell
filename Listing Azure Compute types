@@ -1,0 +1,28 @@
+# fire up Azure PowerShell
+# list all the locations that provide compute resources
+$resources = Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Compute
+$locations = $resources.ResourceTypes.Where{($_.ResourceTypeName -eq 'virtualMachines')}.Locations
+
+#do we have any VMs in that location with more than 224MB RAM and 8 cores?
+Foreach ($location in $locations)
+{
+  write-host $location
+  Get-AzureRmVmSize -Location $location | where {$_.NumberOfCores -eq 8} | where {$_.MemoryInMB -gt 224000}
+}
+
+#do we have any VMs in that location with more than 223MB RAM and 8 cores?
+Foreach ($location in $locations)
+{
+  write-host $location
+  Get-AzureRmVmSize -Location $location | where {$_.NumberOfCores -eq 8} | where {$_.MemoryInMB -gt 223000}
+}
+# more luck on that one. Result:
+East US 2
+Name            NumberOfCores MemoryInMB MaxDataDiskCount OSDiskSizeInMB ResourceDiskSizeInMB
+----            ------------- ---------- ---------------- -------------- --------------------
+Standard_M8-2ms             8     224000                8        1047552               256000
+Standard_M8-4ms             8     224000                8        1047552               256000
+Standard_M8ms               8     224000                8        1047552               256000
+Standard_M8-2ms             8     224000                8        1047552               256000
+Standard_M8-4ms             8     224000                8        1047552               256000
+Standard_M8ms               8     224000                8        1047552               256000
